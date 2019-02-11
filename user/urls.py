@@ -6,6 +6,6 @@ from . import views
 app_name = 'user'
 
 urlpatterns = {
-    path('/',),
+    path('',views.mainpage.as_view(),name = 'indexpage'),
 
 }

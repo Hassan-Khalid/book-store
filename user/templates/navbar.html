@@ -14,7 +14,7 @@
 						<li><a href="#"><i class="fa fa-dollar"></i> USD</a></li>
 						{% if user.is_authenticated %}
 							<li style="font-size:16px; color:red">Hi {{ user.username }}!</li>
-						     <li><p><a href="{% url 'logout' %}">logout</a></p></li>
+						     <li><p><a href="#">logout</a></p></li>
 						{% else %}
 							<li><a href="{% url 'login'%}"><i class="fa fa-user-o"></i> My Account</a></li>
 						{% endif %}
