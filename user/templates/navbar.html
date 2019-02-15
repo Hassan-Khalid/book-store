@@ -42,10 +42,11 @@
 						<!-- SEARCH BAR -->
 						<div class="col-md-6">
 							<div class="header-search">
-
-									<input style="width: calc(100% - 260px);margin-right: -4px;" class="input search" placeholder="Search here" onkeyup="Search()">
-									<button class="search-btn" onclick="Search()">Search</button>
-
+								<form action="{% url 'product:search_book' %}" method="POST">
+									{%csrf_token%}
+								<input style="width: calc(100% - 260px);margin-right: -4px;" class="input search" name="book-search" placeholder="Search here" type="text">
+								<input class="search-btn" type="submit" value="search">Search</input>
+								</form>
 							</div>
 						</div>
 						<!-- /SEARCH BAR -->
@@ -102,7 +103,6 @@
 					<!-- NAV -->
 					<ul class="main-nav nav navbar-nav">
 						<li class="active"><a href="{% url 'home'%}">Home</a></li>
-						<li><a href="#">Best Seller</a></li>
 						<li><a href="{%url 'product:books'%}">Categories</a></li>
 					</ul>
 					<!-- /NAV -->

@@ -4,9 +4,9 @@ from product.models import Book
 
 
 class Order(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    address = models.CharField(max_length=200)
-    email = models.EmailField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE, )
+    address = models.CharField(max_length=200, null=True)
+    email = models.EmailField(null=False)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 

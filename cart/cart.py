@@ -14,20 +14,24 @@ class Cart(object):
     def add(self, book_id, quantity=1, update_quantity=False):
         book = Book.objects.get(id=book_id)
         book_ = str(book_id)
-        print(book)
         if book_ not in self.cart:
-            self.cart[book_] = {'quantity': 0, 'price': str(book.price), 'name': str(book.name), 'book_id': book_id}
+            self.cart[book_id] = {'quantity': 0, 'price': str(book.price), 'name': str(book.name), 'book_id': book_id}
         if update_quantity:
-            self.cart[book_]['quantity'] = quantity
+            self.cart[book_id]['quantity'] = quantity
         else:
-            self.cart[book_]['quantity'] += quantity
+            self.cart[book_id]['quantity'] += quantity
 
-        print(self.cart)
         self.save()
 
     def save(self):
         self.session[settings.CART_SESSION_ID] = self.cart
         self.session.modified = True
+
+    def remove(self, product):
+        product_id = str(product.id)
+        if product_id in self.cart:
+            del self.cart[product_id]
+            self.save()
 
     def __iter__(self):
         book_ids = self.cart.keys()

@@ -22,7 +22,8 @@
      </div>
    <!-- BEGIN books -->
     {% for book in books %}
-    <div class="col-md-3 col-xs-6 prod">
+
+            <div class="col-md-3 col-xs-6 prod">
         <div class="product">
             <div class="product-img">
                 <img height="250px" src="{{book.image.url}}" alt="">
@@ -34,8 +35,12 @@
                 <h4 class="product-price">{{book.price}}$</h4>
                 <div class="product-btns">
                 <form action="{% url 'cart:cart_add' book.id %}" method="post">
+                    <input type=hidden value="1" name="quantity">
+                    <input type=hidden value="1" name="update">
                                 {% csrf_token %}
-                                {{ cart_product_form }}
+                                {{ cart_book_form }}
+
+
                     <button type = "submit"  class="cart add-to-cart-btn">
                         <i class="fa fa-shopping-cart"></i>Buy Now</button>
                 </form>
@@ -45,6 +50,7 @@
             </div>
         </div>
     </div>
+
     {% endfor %}
 </div>
 </div>

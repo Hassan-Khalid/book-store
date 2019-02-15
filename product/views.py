@@ -22,6 +22,25 @@ class BookListView(ListView):
         return context
 
 
+def search_book(request):
+    category = Category.objects.all()
+    if request.POST:
+        book_name_to_search = request.POST.get('book-search')
+        book_name_to_search=book_name_to_search.lower()
+        books = Book.objects.filter(name__iregex=r"(^|\s)%s" % book_name_to_search)
+        print(books)
+        context = {
+            'books': books,
+            'category':category
+        }
+        return render(request,'books.html',context)
+    else:
+        context={
+            'category':category
+        }
+        return render(request,'books.html',context)
+
+
 def top_seller_book(request):
     # books = get_object_or_404(Book, category_id=id, slug=slug)
     books = Book.objects.filter()
