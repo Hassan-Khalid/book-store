@@ -1,6 +1,8 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import get_object_or_404, HttpResponseRedirect
+from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_POST
+from django.views.generic import TemplateView
 from products.models import Book
 
 from .forms import OrderCreateForm, CartAddProductForm
@@ -8,11 +10,13 @@ from .models import OrderItem, Order
 from .services import Cart
 
 
-@login_required
-def order_create(request):
-    cart = Cart(request)
-    order = Order.objects.none()
-    if request.method == 'POST':
+@method_decorator(login_required, name='dispatch')
+class CreateOrder(TemplateView):
+    template_name = 'order.html'
+
+    def post(self, request):
+        cart = Cart(request)
+        order = Order.objects.none()
         form = OrderCreateForm(request.POST)
         user = request.user
         if form.is_valid():
@@ -33,33 +37,59 @@ def order_create(request):
                     quantity=item['quantity']
                 )
             cart.clear()
+        return HttpResponseRedirect('/orders/thanks', {'order': order})
 
-        return render(request, 'thanks.html', {'order': order})
-    else:
+    def get_context_data(self, *args):
+        context = super(CreateOrder, self).get_context_data()
         form = OrderCreateForm()
-    return render(request, 'order.html', {'form': form, 'cart': cart})
+        cart = Cart(self.request)
+        total_items = cart.__len__()
+        total_price = cart.get_total_price()
+        context['cart'] = cart
+        context['form'] = form
+        context['total_items'] = total_items
+        context['total_price'] = total_price
+        print(total_items, total_price)
+        return context
 
 
-@require_POST
-def cart_add(request, book_id):
-    cart = Cart(request)
-    if request.method == 'POST':
+class OrderCompleted(TemplateView):
+    template_name = 'thanks.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(OrderCompleted, self).get_context_data()
+        context['order'] = Order.objects.latest('id')
+        return context
+
+
+@method_decorator(require_POST, name='dispatch')
+class CartAddItem(TemplateView):
+    def post(self, request, book_id, *args, **kwargs):
+        cart = Cart(request)
         form = CartAddProductForm(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
             cart.add(book_id, quantity=cd['quantity'], update_quantity=cd['update'])
-    return redirect('orders:cart_detail')
+        return HttpResponseRedirect('/orders/')
 
 
-def cart_detail(request):
-    cart = Cart(request)
-    for item in cart:
-        item['update_quantity_form'] = CartAddProductForm(initial={'quantity': item['quantity'], 'update': True})
-    return render(request, 'cart_detail.html', {'cart': cart})
+class CartDetails(TemplateView):
+    template_name = 'cart_detail.html'
+
+    def get(self, request, *args, **kwargs):
+        cart = Cart(request)
+        for item in cart:
+            item['update_quantity_form'] = CartAddProductForm(initial={'quantity': item['quantity'], 'update': True})
+        context = {'cart': cart}
+        return self.render_to_response(context)
 
 
-def cart_remove(request, product_id):
-    cart = Cart(request)
-    product = get_object_or_404(Book, id=product_id)
-    cart.remove(product)
-    return redirect('orders:cart_detail')
+class RemoveProductFromCart(TemplateView):
+    template_name = 'cart_detail.html'
+
+    def get(self, request, product_id, **kwargs):
+        cart = Cart(request)
+        product = get_object_or_404(Book, id=product_id)
+        print(product)
+        cart.remove(product)
+        return HttpResponseRedirect('/orders/')

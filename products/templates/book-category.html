@@ -34,6 +34,8 @@
                 <div class="product-btns">
 
                      <form action="{% url 'orders:cart_add' book.id %}" method="post">
+                         <input type=hidden value="1" name="quantity">
+                         <input type=hidden value="1" name="update">
                                 {% csrf_token %}
                                 {{ cart_product_form }}
                     <button type = "submit"  class="cart add-to-cart-btn">

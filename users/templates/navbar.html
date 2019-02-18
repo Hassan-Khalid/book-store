@@ -11,7 +11,7 @@
 						<li><a href="#"><i class="fa fa-map-marker"></i> 1734 Stonecoal Road</a></li>
 					</ul>
 					<ul class="header-links pull-right">
-						<li><a href="#"><i class="fa fa-dollar"></i> USD</a></li>
+						<li><a href="#">{{total_price}} </a><i class="fa fa-dollar"></i></li>
 						{% if user.is_authenticated %}
 							<li style="font-size:16px; color:red">Hi {{ user.username }}!</li>
 							<li><a href="{% url 'logout'%}">logout</a></li>
@@ -45,7 +45,7 @@
 								<form action="{% url 'products:search_book' %}" method="POST">
 									{%csrf_token%}
 								<input style="width: calc(100% - 260px);margin-right: -4px;" class="input search" name="book-search" placeholder="Search here" type="text">
-								<input class="search-btn" type="submit" value="search">Search</input>
+								<input class="search-btn" type="submit" value="search">
 								</form>
 							</div>
 						</div>
@@ -54,22 +54,13 @@
 						<!-- ACCOUNT -->
 						<div class="col-md-3 clearfix">
 							<div class="header-ctn">
-								<!-- Wishlist -->
-								<div>
-									<a href="#">
-										<i class="fa fa-heart-o"></i>
-										<span>Your Wishlist</span>
-										<div class="qty">2</div>
-									</a>
-								</div>
-								<!-- /Wishlist -->
 
 								<!-- Cart -->
 								<div class="dropdown">
 									<a href="{% url 'orders:cart_detail' %}">
 										<i class="fa fa-shopping-cart"></i>
 										<span>Your Cart</span>
-										<div class="qty">{{book.quantity}}</div>
+										<div class="qty">{{total_items}}</div>
 									</a>
 								</div>
 								<!-- /Cart -->
