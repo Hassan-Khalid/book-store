@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container" style="padding-left:100; margin:20px;">
+  <h2 style="padding-left:48%; font-weight:50;">Sign up</h2>
+  <div class="container col-md-4">
+     <form method="post">
+    {% csrf_token %}
+    {% for field in form %}
+      <p>
+        {{ field.label_tag }}<br>
+        {{ field }}
+        {% if field.help_text %}
+          <small style="color: grey">{{ field.help_text }}</small>
+        {% endif %}
+        {% for error in field.errors %}
+          <p style="color: red">{{ error }}</p>
+        {% endfor %}
+      </p>
+
+    {% endfor %}
+    <button type="submit" class="btn btn-warning btn-large" style="margin:40px; align:center; width:200px;">Sign up</button>
+  </form>
+  </div>
+
+</div>
+
+{% endblock %}
